@@ -2,32 +2,25 @@
 
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-neutral-950 text-neutral-100 antialiased;
+  background-image:
+    radial-gradient(at 20% 20%, rgba(139, 92, 246, 0.25) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.20) 0px, transparent 50%),
+    radial-gradient(at 80% 80%, rgba(236, 72, 153, 0.18) 0px, transparent 50%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
-
 
 .glass {
   @apply bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-lg;
+}
+
+.glass-strong {
+  @apply bg-white/15 backdrop-blur-2xl border border-white/25 rounded-2xl shadow-2xl;
 }
