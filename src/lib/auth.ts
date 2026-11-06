@@ -26,21 +26,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const user = await User.findOne({ email: parsed.data.email }).select("+password");
         if (!user) return null;
 
+        // 🔒 bloquea cuentas desactivadas
+        if (!user.activo) return null;
+
         const ok = await bcrypt.compare(parsed.data.password, user.password);
         if (!ok) return null;
 
-        return { id: user._id.toString(), email: user.email, name: user.nombre, rol: user.rol } as any;
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.nombre,
+          rol: user.rol,
+          activo: user.activo,
+        } as any;
       },
     }),
   ],
   callbacks: {
     jwt: async ({ token, user }) => {
-      if (user) (token as any).rol = (user as any).rol;
+      if (user) {
+        (token as any).rol = (user as any).rol;
+        (token as any).activo = (user as any).activo;
+      }
       return token;
     },
     session: async ({ session, token }) => {
-      if (session.user) (session.user as any).id = token.sub;
-      if (session.user) (session.user as any).rol = (token as any).rol;
+      if (session.user) {
+        (session.user as any).id = token.sub;
+        (session.user as any).rol = (token as any).rol;
+        (session.user as any).activo = (token as any).activo;
+      }
       return session;
     },
   },
