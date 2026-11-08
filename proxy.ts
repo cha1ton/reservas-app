@@ -1,22 +1,26 @@
-// src/middleware.ts
+// src/proxy.ts
 
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
+
+// Instancia Edge-safe: SOLO usa auth.config (sin Mongo/bcrypt)
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLogged = !!req.auth;
   const isActive = (req.auth?.user as any)?.activo === true;
-  const isAdmin = (req.auth?.user as any)?.rol === "admin" || (req.auth?.user as any)?.rol === "superadmin";
+  const isAdmin =
+    (req.auth?.user as any)?.rol === "admin" ||
+    (req.auth?.user as any)?.rol === "superadmin";
 
-  // 1) Si no está logueado o está inactivo y va a /dashboard → al login
   if (pathname.startsWith("/dashboard")) {
     if (!isLogged || !isActive || !isAdmin) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  // 2) Si está logueado y va a /login → al dashboard
   if (pathname === "/login" && isLogged && isActive) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
