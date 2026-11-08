@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:superadmin": "tsx scripts/seed-superadmin.ts"
+    "seed:superadmin": "node --env-file=.env.local --import tsx scripts/seed-superadmin.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
