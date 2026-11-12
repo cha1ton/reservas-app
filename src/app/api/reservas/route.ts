@@ -24,3 +24,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Error interno" }, { status: 500 });
   }
 }
+
+export async function GET() {
+  const session = await auth();
+  const rol = (session?.user as any)?.rol;
+  if (!session || (rol !== "admin" && rol !== "superadmin")) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  await connectDB();
+  const reservas = await Reserva.find({}).sort({ fecha: 1 }).populate("servicio").lean();
+  return NextResponse.json(reservas);
+}
